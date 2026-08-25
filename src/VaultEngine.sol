@@ -13,9 +13,13 @@ contract VEngine{
     error SurpassingLimit();
     error HealthFactorBroken();
 
+
+
 address[] public funders;
     mapping(address User => uint256 ETHdeposited) public collateral;
     mapping(address User => uint256 DETtokens) public debt;
+
+
 
 
     constructor(address engineAdd){
@@ -28,6 +32,8 @@ address[] public funders;
 
 
 
+
+
 function ETHToUSD() public view returns(uint256){
 
 AggregatorV3Interface datafeed = AggregatorV3Interface(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419);
@@ -35,6 +41,9 @@ AggregatorV3Interface datafeed = AggregatorV3Interface(0x5f4eC3Df9cbd43714FE2740
 return uint256(answer * 1e10);
 
 }
+
+
+
 
 
 function NetAmntInUSD(uint256 _amnt) public view returns(uint256){
@@ -47,23 +56,32 @@ return NetAmnt;
 
 }
 
+
+
+
+
 function healthFactor() internal returns(bool){
-    if(collateral[msg.sender]>=(15*debt[msg.sender])/10){
+    if(NetAmntInUSD(collateral[msg.sender])>=(15*debt[msg.sender])/10){
         return true;
     } else{
         return false;
     }
 }
 
+
+
+
+
+
 function DepositAndMint(uint256 AmntMint) payable public{
     uint256 AmntFunded = NetAmntInUSD(msg.value);
     uint256 MaxDebtToken = (AmntFunded*10)/15;
 
       funders.push(msg.sender);
-    collateral[msg.sender]+= AmntFunded;
+    collateral[msg.sender]+= msg.value;
 debt[msg.sender] += AmntMint;
 
-    if(healthFactor() && AmntMint <= MaxDebtToken){
+    if(healthFactor()){
     i_dEngine.mint(msg.sender,AmntMint);
     }
     else{
@@ -73,9 +91,14 @@ revert SurpassingLimit();
 
 }
 
+
+
+
+
+
 function DebtAndWithdraw(uint256 EthWithdraw, uint256 TokenBurn) public{
 
-  collateral[msg.sender]-= NetAmntInUSD(EthWithdraw);
+  collateral[msg.sender]-= EthWithdraw;
   debt[msg.sender] -= TokenBurn;
   
   if(healthFactor()){
