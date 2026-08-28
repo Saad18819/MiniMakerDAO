@@ -12,13 +12,16 @@ contract VEngine{
 
     error SurpassingLimit();
     error HealthFactorBroken();
+    error HealthGood();
 
+
+uint256 public constant LIQUIDATION_BONUS = 10;
 
 
 
 address[] public funders;
     mapping(address User => uint256 ETHdeposited) public collateral;
-    mapping(address User => uint256 DETtokens) public debt;
+    mapping(address User => uint256 DETtokensamntinUSD) public debt;
 
 
 
@@ -124,12 +127,36 @@ function DebtAndWithdraw(uint256 EthWithdraw, uint256 TokenBurn) public{
 
 
 
-function tokenToETH(uit256 _amntpaying) public view returns(uint256){
+function debtAmntToETH(uit256 _amntpaying) public view returns(uint256){
     uint256 oneEthPrice = ETHToUSD();
     return (_amntpaying * 1e18)/oneEthPrice;
 }
 
+function liquidate(address user , uint256 debtCovering) external{
 
+    if(healthFactor(user)){
+        revert HealthGood();
+    }
+
+uint256 ethGetting = debtAmntToETH(debtCovering);
+uint256 bonusEth = (LIQUIDATION_BONUS*ethGetting)/100;
+uint256 netEth = ethGetting + bonusEth;
+
+debt[user]-=debtCovering;
+collateral[user]-=netEth;
+
+i_dEngine.burn(msg.sender,debtCovering);
+
+
+(bool success, ) = payable(msg.sender).call{value: netEth}("");
+
+
+
+
+
+
+
+}
 
 
 
