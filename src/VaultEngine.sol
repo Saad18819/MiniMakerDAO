@@ -61,12 +61,16 @@ return NetAmnt;
 
 
 
-function healthFactor() internal returns(bool){
-    if(NetAmntInUSD(collateral[msg.sender])>=(15*debt[msg.sender])/10){
-        return true;
-    } else{
-        return false;
-    }
+function healthFactor(address user) internal returns(bool){
+
+      if(debt[user] == 0){
+        return true
+      }
+
+      return (NetAmntInUSD(collateral[user])) >=((15*debt[user])/10);
+
+
+
 }
 
 
@@ -117,6 +121,14 @@ function DebtAndWithdraw(uint256 EthWithdraw, uint256 TokenBurn) public{
 
 
 }
+
+
+
+function tokenToETH(uit256 _amntpaying) public view returns(uint256){
+    uint256 oneEthPrice = ETHToUSD();
+    return (_amntpaying * 1e18)/oneEthPrice;
+}
+
 
 
 
