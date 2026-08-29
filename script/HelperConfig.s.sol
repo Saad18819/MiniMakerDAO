@@ -40,9 +40,9 @@ MockV3Aggregator mock = new MockV3Aggregator(DECIMALS ,INITIAL_PRICE );
 
 vm.stopBroadcast();
 
-NetworkConfig memory deployedAddress = NetworkConfig({priceFeed:address(mock)});
+ addressStore = NetworkConfig({priceFeed:address(mock)});
 
-return deployedAddress;
+return addressStore;
 
 
 
