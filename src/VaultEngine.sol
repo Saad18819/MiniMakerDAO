@@ -64,10 +64,10 @@ return NetAmnt;
 
 
 
-function healthFactor(address user) internal returns(bool){
+function healthFactor(address user) public view returns(bool){
 
       if(debt[user] == 0){
-        return true
+        return true;
       }
 
       return (NetAmntInUSD(collateral[user])) >=((15*debt[user])/10);
@@ -89,7 +89,7 @@ function DepositAndMint(uint256 AmntMint) payable public{
     collateral[msg.sender]+= msg.value;
 debt[msg.sender] += AmntMint;
 
-    if(healthFactor()){
+    if(healthFactor(msg.sender)){
     i_dEngine.mint(msg.sender,AmntMint);
     }
     else{
@@ -109,7 +109,7 @@ function DebtAndWithdraw(uint256 EthWithdraw, uint256 TokenBurn) public{
   collateral[msg.sender]-= EthWithdraw;
   debt[msg.sender] -= TokenBurn;
   
-  if(healthFactor()){
+  if(healthFactor(msg.sender)){
      i_dEngine.burn(msg.sender,TokenBurn);
     (bool callSuccess, )=payable(msg.sender).call{value:EthWithdraw}("");
   // reetrancy issue ke liye u burn first and then bool thing comes
@@ -127,7 +127,7 @@ function DebtAndWithdraw(uint256 EthWithdraw, uint256 TokenBurn) public{
 
 
 
-function debtAmntToETH(uit256 _amntpaying) public view returns(uint256){
+function debtAmntToETH(uint256 _amntpaying) public view returns(uint256){
     uint256 oneEthPrice = ETHToUSD();
     return (_amntpaying * 1e18)/oneEthPrice;
 }
@@ -145,7 +145,7 @@ uint256 netEth = ethGetting + bonusEth;
 debt[user]-=debtCovering;
 collateral[user]-=netEth;
 
-i_dEngine.burn(msg.sender,debtCovering);
+i_dEngine.burnFrom(msg.sender,debtCovering);
 
 
 (bool success, ) = payable(msg.sender).call{value: netEth}("");
