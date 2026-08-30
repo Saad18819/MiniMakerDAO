@@ -27,7 +27,7 @@ address[] public funders;
 
 
 
-    constructor(address engineAdd,priceFeed){
+    constructor(address engineAdd,address priceFeed){
         i_dEngine = dEngine(engineAdd);
        // this putting address inside is just typecasting basically we did this is coz at that address jaha pe dengine deployed hua hai voh vala chaiye apan ko thats why we put an address
         // You use address in the constructor whenever your contract needs to talk to a contract that ALREADY EXISTS on the blockchain.
