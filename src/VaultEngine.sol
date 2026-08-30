@@ -4,10 +4,11 @@ pragma solidity ^0.8.19;
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 import {dEngine} from "./dEngineToken.sol";
 
+
 contract VEngine{
 
-    dEngine private immutable i_dEngine;
-
+    dEngine public immutable i_dEngine;
+AggregatorV3Interface public priceFeedData;
 
 
     error SurpassingLimit();
@@ -26,11 +27,14 @@ address[] public funders;
 
 
 
-    constructor(address engineAdd){
+    constructor(address engineAdd,priceFeed){
         i_dEngine = dEngine(engineAdd);
-
-        // this putting address inside is just typecasting basically we did this is coz at that address jaha pe dengine deployed hua hai voh vala chaiye apan ko thats why we put an address
+       // this putting address inside is just typecasting basically we did this is coz at that address jaha pe dengine deployed hua hai voh vala chaiye apan ko thats why we put an address
         // You use address in the constructor whenever your contract needs to talk to a contract that ALREADY EXISTS on the blockchain.
+
+    priceFeedData = AggregatorV3Interface(priceFeed);
+
+
 
     }
 
