@@ -5,6 +5,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
 import {dEngine} from "./dEngineToken.sol";
 
 
+
 contract VEngine{
 
     dEngine public immutable i_dEngine;
@@ -44,8 +45,8 @@ address[] public funders;
 
 function ETHToUSD() public view returns(uint256){
 
-AggregatorV3Interface datafeed = AggregatorV3Interface(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419);
-(,int256 answer,,) = datafeed.latestRoundData();
+
+(,int256 answer,,) = priceFeedData.latestRoundData();
 return uint256(answer * 1e10);
 
 }
