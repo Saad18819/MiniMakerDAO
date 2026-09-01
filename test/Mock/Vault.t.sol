@@ -41,6 +41,7 @@ function testDepositAndMint() external{
     DepositAndMint{value:2 ether}(100*1e18);
     assertEq(collateral[user],2 ether);
     assertEq(debt[user],100*1e18);
+    
 }
 
 
