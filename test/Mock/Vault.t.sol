@@ -13,7 +13,7 @@ contract VaultTest is Test{
 
     VEngine engine;
 
-    function setup() public{
+    function setUp() public{
        deployment deployScript = new deployment(); 
        engine = deployScript.run();
     }
@@ -22,14 +22,14 @@ contract VaultTest is Test{
 address user = makeAddr("Saad");
 
 
-function testethToUsd() external{
+function testethToUsd() external view{
 assertEq(engine.ETHToUSD() ,2000e18);
 
 }
 
-function testNetAmntInUsd() external{
+function testNetAmntInUsd() external view{
 
-uint256 amntinEther = NetAmntInUSD(1 ether);
+uint256 amntinEther = engine.NetAmntInUSD(1 ether);
 assertEq(amntinEther , 2000e18);
     
 }
@@ -38,11 +38,13 @@ function testDepositAndMint() external{
 
     vm.deal(user,10 ether);
     vm.prank(user);
-    DepositAndMint{value:2 ether}(100*1e18);
-    assertEq(collateral[user],2 ether);
-    assertEq(debt[user],100*1e18);
-    
+    engine.DepositAndMint{value:2 ether}(1000*1e18);
+    assertEq(engine.collateral(user),2 ether);
+    assertEq(engine.debt(user),1000*1e18);
+
 }
+// In Solidity, brackets [ ] are only used inside the contract that owns the mapping.
+//When you access a public mapping from outside the contract (like in your Foundry test script using engine), Solidity automatically generates a getter function for you. Because it is a function call across contract boundaries, you must use parentheses ( ).
 
 
 
