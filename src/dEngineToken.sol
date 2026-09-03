@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.19;
 
-import {ERC20Burnable, ERC20} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 
@@ -32,6 +32,11 @@ function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
 
         _burn(_from, _amount);
     }
+
+    function burnFrom(address account, uint256 amount) public{
+    _spendAllowance(account, msg.sender, amount);
+    _burn(account, amount);
+}
 
 }
 
