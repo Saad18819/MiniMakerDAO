@@ -49,8 +49,9 @@ function testDepositAndMint() external{
 
 function testrevertDepositAndMint() external{
     vm.deal(user,2 ether);
+     vm.prank(user);
     vm.expectRevert();
-    vm.prank(user);
+  
     engine.DepositAndMint{value:1 ether}(1500*1e18);
 }
 
