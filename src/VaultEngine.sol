@@ -46,7 +46,7 @@ address[] public funders;
 function ETHToUSD() public view returns(uint256){
 
 
-(,int256 answer,,) = priceFeedData.latestRoundData();
+(,int256 answer,,,) = priceFeedData.latestRoundData();
 return uint256(answer * 1e10);
 
 }
