@@ -56,7 +56,7 @@ function testrevertDepositAndMint() external{
 }
 
 
-}
+
 
 function testDebtAndWithdraw() external{
 
@@ -64,10 +64,12 @@ function testDebtAndWithdraw() external{
   vm.prank(user);
    engine.DepositAndMint{value:5 ether}(5000*1e18);
    engine.DebtAndWithdraw(3 ether,4000e18);
-   assertEq(collateral(user),2);
-   assertEq(debt(user),1000e18);
+   assertEq(engine.collateral(user),2 ether);
+   assertEq(engine.debt(user),1000e18);
 
 
+
+}
 
 }
 
