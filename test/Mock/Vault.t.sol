@@ -58,6 +58,12 @@ function testrevertDepositAndMint() external{
 
 }
 
+function testDebtAndWithdraw() external{
+
+  vm
+
+
+}
 
 
 
