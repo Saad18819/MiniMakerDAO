@@ -47,6 +47,12 @@ function testDepositAndMint() external{
 //When you access a public mapping from outside the contract (like in your Foundry test script using engine), Solidity automatically generates a getter function for you. Because it is a function call across contract boundaries, you must use parentheses ( ).
 
 
+function testrevertDepositAndMint() external{
+    vm.deal(user,2 ether);
+    vm.expectRevert();
+    vm.prank(user);
+    engine.DepositAndMint{value:1 ether}(1500*1e18);
+}
 
 
 }
