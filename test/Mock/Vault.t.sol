@@ -72,7 +72,14 @@ function testDebtAndWithdraw() external{
 }
 
 function testrevertIfHealthIsGoodLiquidation() external{
-    
+    vm.deal(user,10 ether);
+    vm.prank(user);
+    engine.DepositAndMint{value:5 ether}(5000*1e18);
+
+    address liquidator = makeAddr("SAAD");
+    vm.prank(liquidator);
+    vm.expectRevert();
+    engine.liquidate(user,200e18);
 }
 
 
@@ -83,7 +90,7 @@ function testrevertIfHealthIsGoodLiquidation() external{
 
 
 
-}
+
 
 
 
