@@ -13,7 +13,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
 contract VaultTest is Test{
 
     VEngine engine;
-    MockV3Aggregator mockPriceFeed
+    MockV3Aggregator mockPriceFeed;
 
     
 
