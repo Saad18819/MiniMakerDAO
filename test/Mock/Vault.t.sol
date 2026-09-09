@@ -97,9 +97,10 @@ mockPriceFeed.updateAnswer(1200e8);
 
 
 vm.deal(liquidator,10 ether);
-vm.prank(liquidator);
+vm.startPrank(liquidator);
 engine.DepositAndMint{value:1 ether}(1000e18);
 engine.liquidate(user,1000e18);
+vm.stopPrank();
 assertEq(engine.debt(user),4000e18);
 
 
