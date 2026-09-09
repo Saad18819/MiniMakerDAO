@@ -24,6 +24,7 @@ uint256 public constant LIQUIDATION_BONUS = 10;
 address[] public funders;
     mapping(address User => uint256 ETHdeposited) public collateral;
     mapping(address User => uint256 DETtokensamntinUSD) public debt;
+    // debt is tokens okkk not eth or usd amnt 
 
 
 
@@ -137,9 +138,12 @@ function debtAmntToETH(uint256 _amntpaying) public view returns(uint256){
     return (_amntpaying * 1e18)/oneEthPrice;
 }
 
-function liquidate(address user , uint256 debtCovering) external{
 
-    if(healthFactor(user)){
+
+
+function liquidate(address mainUser , uint256 debtCovering) external{
+
+    if(healthFactor(mainUser)){
         revert HealthGood();
     }
 
@@ -147,8 +151,8 @@ uint256 ethGetting = debtAmntToETH(debtCovering);
 uint256 bonusEth = (LIQUIDATION_BONUS*ethGetting)/100;
 uint256 netEth = ethGetting + bonusEth;
 
-debt[user]-=debtCovering;
-collateral[user]-=netEth;
+debt[mainUser]-=debtCovering;
+collateral[mainUser]-=netEth;
 
 i_dEngine.burnFrom(msg.sender,debtCovering);
 
