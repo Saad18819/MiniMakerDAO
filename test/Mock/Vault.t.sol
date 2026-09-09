@@ -17,7 +17,7 @@ contract VaultTest is Test{
        deployment deployScript = new deployment(); 
        engine = deployScript.run();
        MockV3Aggregator mockPriceFeed = MockV3Aggregator(HelperConfig.addressStore());
-       
+
     }
 
 
@@ -87,6 +87,16 @@ function testrevertIfHealthIsGoodLiquidation() external{
 
 function testLiquidationSuccess() external{
     
+vm.deal(user,10 ether);
+vm.prank(user);
+engine.DepositAndMint{value:5 ether}(5000*1e18);
+
+address liquidator = makeAddr("Khan");
+mockPriceFeed.updateAnswer(1200e8);
+// updateAnswer is an inbuilt function in chainlink oracle 
+
+vm.deal(liquidator,10 ether);
+vm.prank(liquidator);
 
 
 
