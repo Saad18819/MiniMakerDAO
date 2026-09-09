@@ -13,12 +13,18 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
 contract VaultTest is Test{
 
     VEngine engine;
+    MockV3Aggregator mockPriceFeed
+
+    //
 
     function setUp() public{
        deployment deployScript = new deployment(); 
        engine = deployScript.run();
-       MockV3Aggregator mockPriceFeed = MockV3Aggregator(HelperConfig.addressStore());
-
+       mockPriceFeed = MockV3Aggregator(HelperConfig.addressStore());
+   // MockV3Aggregator mockPriceFeed = MockV3Aggregator(HelperConfig.addressStore());
+   // the above thing is wrong coz this is local declaration and the other function wont be able to know abt this variable
+   // the question arises then what abt deployscript so its deleted as well just that when u run .run it got deployed at some address so that thign exist on that addres forever 
+   
     }
 
 
