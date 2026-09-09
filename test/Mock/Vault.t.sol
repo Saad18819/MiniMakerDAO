@@ -7,7 +7,8 @@ import {deployment} from "../../script/Deploy.s.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 import {VEngine} from "../../src/VaultEngine.sol";
 import {dEngine} from "../../src/dEngineToken.sol";
-
+import {MockV3Aggregator} from "./MockV3Aggregator.sol"; 
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 contract VaultTest is Test{
 
