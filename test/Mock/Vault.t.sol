@@ -14,6 +14,7 @@ contract VaultTest is Test{
 
     VEngine engine;
     MockV3Aggregator mockPriceFeed;
+    HelperConfig config;
 
     
 
