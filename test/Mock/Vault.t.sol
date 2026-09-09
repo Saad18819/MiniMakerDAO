@@ -19,11 +19,12 @@ contract VaultTest is Test{
 
     function setUp() public{
        deployment deployScript = new deployment(); 
-       engine = deployScript.run();
-       mockPriceFeed = MockV3Aggregator(HelperConfig.addressStore());
+       (engine,config) = deployScript.run();
+       mockPriceFeed = MockV3Aggregator(config.addressStore());
    // MockV3Aggregator mockPriceFeed = MockV3Aggregator(HelperConfig.addressStore());
    // the above thing is wrong coz this is local declaration and the other function wont be able to know abt this variable
    // the question arises then what abt deployscript so its deleted as well just that when u run .run it got deployed at some address so that thign exist on that addres forever 
+   // and also u cant write helperconfig coz when deploying u gotta return it in deployment so u can use it else directly calling that file is not a correct way
 
     }
 
