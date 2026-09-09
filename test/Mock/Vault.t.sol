@@ -93,12 +93,14 @@ engine.DepositAndMint{value:5 ether}(5000*1e18);
 
 address liquidator = makeAddr("Khan");
 mockPriceFeed.updateAnswer(1200e8);
-// updateAnswer is an inbuilt function in chainlink oracle 
+// updateAnswer is an inbuilt function in chainlink oracle which updates the priceFeed
+
 
 vm.deal(liquidator,10 ether);
 vm.prank(liquidator);
-
-
+engine.DepositAndMint{value:1 ether}(1000e18);
+engine.liquidate(user,1000e18);
+assertEq(engine.debt(user),4000e18);
 
 
 
