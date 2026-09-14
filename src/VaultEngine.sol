@@ -9,6 +9,7 @@ import {dEngine} from "./dEngineToken.sol";
 contract VEngine{
 
     dEngine public immutable i_dEngine;
+    // whenever u deploy a token like it has some address then u gotta make its varibale here to make it works
 AggregatorV3Interface public priceFeedData;
 
 
