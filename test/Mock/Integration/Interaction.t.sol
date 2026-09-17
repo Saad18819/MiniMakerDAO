@@ -28,10 +28,14 @@ HelperConfig config;
   
     }
 
-    
+
 
     function testFinalSystem() external{
-
+    address user = makeAddr("Saad");
+    address user1 = makeAddr("Maaz");
+    vm.deal(user,10 ether);
+    vm.deal(user1,10 ether);
+    
     }
 
 
