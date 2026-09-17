@@ -103,10 +103,6 @@ revert SurpassingLimit();
 
 
 
-
-
-
-
 function DebtAndWithdraw(uint256 EthWithdraw, uint256 TokenBurn) public{
 
   collateral[msg.sender]-= EthWithdraw;
@@ -164,8 +160,6 @@ i_dEngine.burnFrom(msg.sender,debtCovering);
 
 
 (bool success, ) = payable(msg.sender).call{value: netEth}("");
-
-
 
 
 
