@@ -39,7 +39,7 @@ HelperConfig config;
     //DEPOSIT AND MINT LOGIC
 
 vm.startPrank(user);
-engine.DepositAndMint{value:5 ether}(5000e18);
+eng.DepositAndMint{value:5 ether}(5000e18);
 vm.stopPrank();
 
 // MARKET FLUCTUATION HAPPENS
