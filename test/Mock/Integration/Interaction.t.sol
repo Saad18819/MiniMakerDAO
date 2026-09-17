@@ -43,6 +43,9 @@ engine.DepositAndMint{value:5 ether}(5000e18);
 vm.stopPrank();
 
 // MARKET FLUCTUATION HAPPENS
+mockPriceFeed.updateAnswer(1200e8);
+
+
 
 
 
