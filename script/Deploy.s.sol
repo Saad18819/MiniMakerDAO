@@ -9,7 +9,7 @@ import {VEngine} from "../src/VaultEngine.sol";
 
 contract deployment is Script{
 
-    function run() external returns(VEngine,HelperConfig){
+    function run() external returns(VEngine,HelperConfig,dEngine){
     
     HelperConfig priceAddress = new HelperConfig();
    address ethUsdprice =  priceAddress.addressStore();
@@ -29,7 +29,7 @@ contract deployment is Script{
 
  vm.stopBroadcast();
 
- return (engine,priceAddress);
+ return (engine,priceAddress,token);
 
 
 

@@ -15,12 +15,13 @@ contract VaultTest is Test{
     VEngine engine;
     MockV3Aggregator mockPriceFeed;
     HelperConfig config;
+    dEngine token;
 
     
 
     function setUp() public{
        deployment deployScript = new deployment(); 
-       (engine,config) = deployScript.run();
+       (engine,config,token) = deployScript.run();
        mockPriceFeed = MockV3Aggregator(config.addressStore());
    // MockV3Aggregator mockPriceFeed = MockV3Aggregator(HelperConfig.addressStore());
    // the above thing is wrong coz this is local declaration and the other function wont be able to know abt this variable
@@ -72,12 +73,29 @@ function testrevertDepositAndMint() external{
 function testDebtAndWithdraw() external{
 
   vm.deal(user , 10 ether);
-  vm.prank(user);
+  vm.startPrank(user);
    engine.DepositAndMint{value:5 ether}(5000*1e18);
    engine.DebtAndWithdraw(3 ether,4000e18);
+   vm.stopPrank();
    assertEq(engine.collateral(user),2 ether);
    assertEq(engine.debt(user),1000e18);
 
+/*
+vm.deal(user, 10 ether);
+vm.prank(user); // <--- ONLY applies to the NEXT transaction (DepositAndMint)
+engine.DepositAndMint{value: 5 ether}(5000 * 1e18);
+
+// Called by the Test Contract itself (address(this)), NOT user!
+engine.DebtAndWithdraw(3 ether, 4000e18);
+
+this is the above code i wrote initially, the issue with it is that
+
+vm.prank(user) only lasts for one single external call.When engine.DebtAndWithdraw(...) runs on the next line:msg.sender becomes the Test Contract address,
+ NOT user.collateral[TestContract] is 0.
+ collateral[TestContract] -= 3 ether calculates $0 - 3, causing an arithmetic underflow (0x11).
+
+
+ */
 
 
 }
@@ -111,7 +129,9 @@ mockPriceFeed.updateAnswer(1200e8);
 
 vm.deal(liquidator,10 ether);
 vm.startPrank(liquidator);
-engine.DepositAndMint{value:1 ether}(1000e18);
+engine.DepositAndMint{value:2 ether}(1000e18);
+
+    token.approve(address(engine), 1000e18);
 engine.liquidate(user,1000e18);
 vm.stopPrank();
 assertEq(engine.debt(user),4000e18);

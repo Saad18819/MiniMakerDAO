@@ -18,13 +18,14 @@ contract integration is Test{
 VEngine eng;
 HelperConfig config;
  MockV3Aggregator mockPriceFeed;
+ dEngine token;
 
 
 
     function setUp() external{
         deployment deployContract = new deployment();
-     (eng,config) = deployContract.run();
-    mockPriceFeed = AggregatorV3Interface(config.addressStore());
+     (eng,config,token) = deployContract.run();
+    mockPriceFeed = MockV3Aggregator(config.addressStore());
   
     }
 
@@ -54,6 +55,7 @@ mockPriceFeed.updateAnswer(1200e8);
 
 vm.startPrank(user1);
 eng.DepositAndMint{value:5 ether}(1000e18);
+token.approve(address(eng), 600e18);
 eng.liquidate(user,600e18);
 vm.stopPrank();
 
