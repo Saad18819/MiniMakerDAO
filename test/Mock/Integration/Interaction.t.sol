@@ -6,7 +6,7 @@ pragma solidity ^0.8.19;
 
 import {Test} from "forge-std/Test.sol";
 import {deployment} from "../../script/Deploy.s.sol";
-import {HelperConfig} from "../../script/Deploy.s.sol";
+import {HelperConfig} from "../../script/HelperConfig.s.sol";
 import {dEngine} from "../../src/dEngineToken.sol";
 import {VEngine} from "../../src/VaultEngine.sol";
 import {MockV3Aggregator} from "./MockV3Aggregator.sol"; 
@@ -21,10 +21,10 @@ HelperConfig config;
 
 
 
-    function setup() external{
+    function setUp() external{
         deployment deployContract = new deployment();
      (eng,config) = deployContract.run();
-    mockPriceFeed = AggregatorV3Interface(config.addressStore);
+    mockPriceFeed = AggregatorV3Interface(config.addressStore());
   
     }
 
@@ -57,6 +57,10 @@ eng.DepositAndMint{value:5 ether}(1000e18);
 eng.liquidate(user,600e18);
 vm.stopPrank();
 
+// ASSERT LOGIC
+
+assertEq(eng.debt(user),4400e18);
+assertTrue(user1.balance > 5 ether );
 
 
 
