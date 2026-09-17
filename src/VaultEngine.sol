@@ -42,9 +42,6 @@ address[] public funders;
     }
 
 
-
-
-
 function ETHToUSD() public view returns(uint256){
 
 
@@ -78,9 +75,6 @@ function healthFactor(address user) public view returns(bool){
       }
 
       return (NetAmntInUSD(collateral[user])) >=((15*debt[user])/10);
-
-
-
 }
 
 
