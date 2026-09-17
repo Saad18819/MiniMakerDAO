@@ -19,16 +19,35 @@ dEngine eng;
 HelperConfig config;
  MockV3Aggregator mockPriceFeed;
 
+
+uint256 constant STARTING_MONEY = 10 ether;
+
+address user = makeAddr("Saad");
+address user1 = makeAddr("Maaz");
+
+
+
     function setup() external{
         deployment deployContract = new deployment();
      (eng,config) = deployContract.run();
     mockPriceFeed = AggregatorV3Interface(config.addressStore);
+    vm.deal(user,STARTING_MONEY);
+    vm.deal(user1,STARTING_MONEY);
     }
 
-
-
-
-   
     
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
