@@ -15,7 +15,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
 
 contract integration is Test{
 
-dEngine eng;
+VEngine eng;
 HelperConfig config;
  MockV3Aggregator mockPriceFeed;
 
@@ -36,14 +36,27 @@ HelperConfig config;
     vm.deal(user,10 ether);
     vm.deal(user1,10 ether);
 
-    //DEPOSIT AND MINT LOGIC
+//DEPOSIT AND MINT LOGIC
 
 vm.startPrank(user);
 eng.DepositAndMint{value:5 ether}(5000e18);
 vm.stopPrank();
 
+
+
 // MARKET FLUCTUATION HAPPENS
 mockPriceFeed.updateAnswer(1200e8);
+
+
+
+//LIQUIDATION LOGIC
+
+
+vm.startPrank(user1);
+eng.DepositAndMint{value:5 ether}(1000e18);
+eng.liquidate(user,600e18);
+vm.stopPrank();
+
 
 
 
