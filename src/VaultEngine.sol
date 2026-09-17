@@ -25,7 +25,7 @@ uint256 public constant LIQUIDATION_BONUS = 10;
 address[] public funders;
     mapping(address User => uint256 ETHdeposited) public collateral;
     mapping(address User => uint256 DETtokensamntinUSD) public debt;
-    // debt is tokens okkk not eth or usd amnt 
+    // debt is tokens okkk not eth or usd amnt but its in USD
 
 
 
