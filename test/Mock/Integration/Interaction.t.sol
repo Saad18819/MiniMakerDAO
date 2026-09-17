@@ -35,7 +35,18 @@ HelperConfig config;
     address user1 = makeAddr("Maaz");
     vm.deal(user,10 ether);
     vm.deal(user1,10 ether);
-    
+
+    //DEPOSIT AND MINT LOGIC
+
+vm.startPrank(user);
+engine.DepositAndMint{value:5 ether}(5000e18);
+vm.stopPrank();
+
+// MARKET FLUCTUATION HAPPENS
+
+
+
+
     }
 
 
