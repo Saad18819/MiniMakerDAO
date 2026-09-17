@@ -105,6 +105,7 @@ revert SurpassingLimit();
 
 
 
+
 function DebtAndWithdraw(uint256 EthWithdraw, uint256 TokenBurn) public{
 
   collateral[msg.sender]-= EthWithdraw;
@@ -141,6 +142,8 @@ function liquidate(address mainUser , uint256 debtCovering) external{
     if(healthFactor(mainUser)){
         revert HealthGood();
     }
+
+
 
 uint256 ethGetting = debtAmntToETH(debtCovering);
 uint256 bonusEth = (LIQUIDATION_BONUS*ethGetting)/100;
