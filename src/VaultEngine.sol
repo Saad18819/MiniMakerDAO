@@ -16,6 +16,7 @@ AggregatorV3Interface public priceFeedData;
     error SurpassingLimit();
     error HealthFactorBroken();
     error HealthGood();
+    error InsufficientCollateral();
 
 
 uint256 public constant LIQUIDATION_BONUS = 10;
@@ -138,7 +139,7 @@ function debtAmntToETH(uint256 _amntpaying) public view returns(uint256){
 
 
 function liquidate(address mainUser , uint256 debtCovering) external{
-
+// 1.CHECK
     if(healthFactor(mainUser)){
         revert HealthGood();
     }
@@ -149,9 +150,16 @@ uint256 ethGetting = debtAmntToETH(debtCovering);
 uint256 bonusEth = (LIQUIDATION_BONUS*ethGetting)/100;
 uint256 netEth = ethGetting + bonusEth;
 
+if (collateral[mainUser] < netEth) {
+            revert InsufficientCollateral();
+        }
+
+// 2. EFFECTS(update internal accounting first)
 debt[mainUser]-=debtCovering;
 collateral[mainUser]-=netEth;
 
+
+// 3.Interactions(external call last)
 i_dEngine.burnFrom(msg.sender,debtCovering);
 
 
