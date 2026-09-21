@@ -5,15 +5,13 @@ pragma solidity ^0.8.19;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
+contract dEngine is ERC20, Ownable {
+    error dEngineToken__MustBeMoreThanZero();
+    error dEngineToken__NotZeroAddress();
 
+    constructor() ERC20("dEngine Token", "DET") Ownable(msg.sender) {}
 
-contract dEngine is ERC20, Ownable{
-error dEngineToken__MustBeMoreThanZero();
-error dEngineToken__NotZeroAddress();
-
-constructor() ERC20("dEngine Token", "DET") Ownable(msg.sender) {}
-
-function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
+    function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
         if (_to == address(0)) {
             revert dEngineToken__NotZeroAddress();
         }
@@ -33,13 +31,11 @@ function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
         _burn(_from, _amount);
     }
 
-    function burnFrom(address account, uint256 amount) public{
-    _spendAllowance(account, msg.sender, amount);
-    _burn(account, amount);
+    function burnFrom(address account, uint256 amount) public {
+        _spendAllowance(account, msg.sender, amount);
+        _burn(account, amount);
+    }
 }
-
-}
-
 
 /*
 LEARNING

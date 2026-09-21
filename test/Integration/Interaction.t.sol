@@ -2,88 +2,53 @@
 
 pragma solidity ^0.8.19;
 
-
-
 import {Test} from "forge-std/Test.sol";
 import {deployment} from "../../script/Deploy.s.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 import {dEngine} from "../../src/dEngineToken.sol";
 import {VEngine} from "../../src/VaultEngine.sol";
-import {MockV3Aggregator} from "../Mock/MockV3Aggregator.sol"; 
+import {MockV3Aggregator} from "../Mock/MockV3Aggregator.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
+contract integration is Test {
+    VEngine eng;
+    HelperConfig config;
+    MockV3Aggregator mockPriceFeed;
+    dEngine token;
 
-contract integration is Test{
-
-VEngine eng;
-HelperConfig config;
- MockV3Aggregator mockPriceFeed;
- dEngine token;
-
-
-
-    function setUp() external{
+    function setUp() external {
         deployment deployContract = new deployment();
-     (eng,config,token) = deployContract.run();
-    mockPriceFeed = MockV3Aggregator(config.addressStore());
-  
+        (eng, config, token) = deployContract.run();
+        mockPriceFeed = MockV3Aggregator(config.addressStore());
     }
 
+    function testFinalSystem() external {
+        address user = makeAddr("Saad");
+        address user1 = makeAddr("Maaz");
+        vm.deal(user, 10 ether);
+        vm.deal(user1, 10 ether);
 
+        //DEPOSIT AND MINT LOGIC
 
-    function testFinalSystem() external{
-    address user = makeAddr("Saad");
-    address user1 = makeAddr("Maaz");
-    vm.deal(user,10 ether);
-    vm.deal(user1,10 ether);
+        vm.startPrank(user);
+        eng.DepositAndMint{value: 5 ether}(5000e18);
+        vm.stopPrank();
 
-//DEPOSIT AND MINT LOGIC
+        // MARKET FLUCTUATION HAPPENS
+        mockPriceFeed.updateAnswer(1200e8);
 
-vm.startPrank(user);
-eng.DepositAndMint{value:5 ether}(5000e18);
-vm.stopPrank();
+        //LIQUIDATION LOGIC
 
+        vm.startPrank(user1);
+        eng.DepositAndMint{value: 5 ether}(1000e18);
+        token.approve(address(eng), 600e18);
+        eng.liquidate(user, 600e18);
+        vm.stopPrank();
 
+        // ASSERT LOGIC
 
-// MARKET FLUCTUATION HAPPENS
-mockPriceFeed.updateAnswer(1200e8);
-
-
-
-//LIQUIDATION LOGIC
-
-
-vm.startPrank(user1);
-eng.DepositAndMint{value:5 ether}(1000e18);
-token.approve(address(eng), 600e18);
-eng.liquidate(user,600e18);
-vm.stopPrank();
-
-// ASSERT LOGIC
-
-assertEq(eng.debt(user),4400e18);
-assertTrue(user1.balance > 5 ether );
-
-
-
-
-
-
+        assertEq(eng.debt(user), 4400e18);
+        assertTrue(user1.balance > 5 ether);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 

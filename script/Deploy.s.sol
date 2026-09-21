@@ -3,40 +3,32 @@
 pragma solidity ^0.8.19;
 
 import {Script} from "forge-std/Script.sol";
-import { HelperConfig} from "./HelperConfig.s.sol";
+import {HelperConfig} from "./HelperConfig.s.sol";
 import {dEngine} from "../src/dEngineToken.sol";
 import {VEngine} from "../src/VaultEngine.sol";
 
-contract deployment is Script{
+contract deployment is Script {
+    function run() external returns (VEngine, HelperConfig, dEngine) {
+        HelperConfig priceAddress = new HelperConfig();
+        address ethUsdprice = priceAddress.addressStore();
 
-    function run() external returns(VEngine,HelperConfig,dEngine){
-    
-    HelperConfig priceAddress = new HelperConfig();
-   address ethUsdprice =  priceAddress.addressStore();
+        vm.startBroadcast();
 
-   vm.startBroadcast();
+        dEngine token = new dEngine();
 
-  dEngine token = new dEngine();
+        VEngine engine = new VEngine(address(token), ethUsdprice);
 
- VEngine engine = new VEngine(address(token),ethUsdprice);
+        token.transferOwnership(address(engine));
 
- token.transferOwnership(address(engine));
+        // In this deployment script, token.transferOwnership(address(engine)); transfers the administrative control of your dEngine token contract to the deployed VEngine contract.
+        // It guarantees that nobody (not even you as the developer) can arbitrarily mint dEngine tokens out of thin air.
+        // Tokens can now only be minted or burned through the audited math and collateral checks programmed inside VEngine.
 
-// In this deployment script, token.transferOwnership(address(engine)); transfers the administrative control of your dEngine token contract to the deployed VEngine contract.
-// It guarantees that nobody (not even you as the developer) can arbitrarily mint dEngine tokens out of thin air.
-// Tokens can now only be minted or burned through the audited math and collateral checks programmed inside VEngine.
+        vm.stopBroadcast();
 
-
- vm.stopBroadcast();
-
- return (engine,priceAddress,token);
-
-
-
-
+        return (engine, priceAddress, token);
     }
 }
-
 
 /*
 QUICK LEARNING

@@ -4,169 +4,104 @@ pragma solidity ^0.8.19;
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 import {dEngine} from "./dEngineToken.sol";
 
-
-
-contract VEngine{
-
+contract VEngine {
     dEngine public immutable i_dEngine;
     // whenever u deploy a token like it has some address then u gotta make its varibale here to make it works and also put it in constructor
-AggregatorV3Interface public priceFeedData;
-
+    AggregatorV3Interface public priceFeedData;
 
     error SurpassingLimit();
     error HealthFactorBroken();
     error HealthGood();
     error InsufficientCollateral();
 
+    uint256 public constant LIQUIDATION_BONUS = 10;
 
-uint256 public constant LIQUIDATION_BONUS = 10;
-
-
-
-address[] public funders;
+    address[] public funders;
     mapping(address User => uint256 ETHdeposited) public collateral;
     mapping(address User => uint256 DETtokensamntinUSD) public debt;
     // debt is tokens okkk not eth or usd amnt but its in USD
 
-
-
-
-    constructor(address engineAdd,address priceFeed){
+    constructor(address engineAdd, address priceFeed) {
         i_dEngine = dEngine(engineAdd);
-       // this putting address inside is just typecasting basically we did this is coz at that address jaha pe dengine deployed hua hai voh vala chaiye apan ko thats why we put an address
+        // this putting address inside is just typecasting basically we did this is coz at that address jaha pe dengine deployed hua hai voh vala chaiye apan ko thats why we put an address
         // You use address in the constructor whenever your contract needs to talk to a contract that ALREADY EXISTS on the blockchain.
 
-    priceFeedData = AggregatorV3Interface(priceFeed);
-
-
-
+        priceFeedData = AggregatorV3Interface(priceFeed);
     }
 
-
-function ETHToUSD() public view returns(uint256){
-
-
-(,int256 answer,,,) = priceFeedData.latestRoundData();
-return uint256(answer * 1e10);
-
-}
-
-
-
-
-
-function NetAmntInUSD(uint256 _amnt) public view returns(uint256){
-
-uint256 SingleEthInUSDPrice = ETHToUSD();
-uint256 NetAmnt = (SingleEthInUSDPrice * _amnt)/1e18;
-return NetAmnt;
-
-
-
-}
-
-
-
-
-
-function healthFactor(address user) public view returns(bool){
-
-      if(debt[user] == 0){
-        return true;
-      }
-
-      return (NetAmntInUSD(collateral[user])) >=((15*debt[user])/10);
-}
-
-
-
-
-
-
-function DepositAndMint(uint256 AmntMint) payable public{
-    uint256 AmntFunded = NetAmntInUSD(msg.value);
-    uint256 MaxDebtToken = (AmntFunded*10)/15;
-
-      funders.push(msg.sender);
-    collateral[msg.sender]+= msg.value;
-debt[msg.sender] += AmntMint;
-
-    if(healthFactor(msg.sender)){
-    i_dEngine.mint(msg.sender,AmntMint);
-    }
-    else{
-revert SurpassingLimit();
+    function ETHToUSD() public view returns (uint256) {
+        (, int256 answer,,,) = priceFeedData.latestRoundData();
+        return uint256(answer * 1e10);
     }
 
-
-}
-
-
-
-function DebtAndWithdraw(uint256 EthWithdraw, uint256 TokenBurn) public{
-
-  collateral[msg.sender]-= EthWithdraw;
-  debt[msg.sender] -= TokenBurn;
-  
-  if(healthFactor(msg.sender)){
-     i_dEngine.burn(msg.sender,TokenBurn);
-    (bool callSuccess, )=payable(msg.sender).call{value:EthWithdraw}("");
-  // reetrancy issue ke liye u burn first and then bool thing comes
-
-  }
-  
-  else{
-    revert HealthFactorBroken();
-  }
-
-
-
-
-}
-
-
-
-function debtAmntToETH(uint256 _amntpaying) public view returns(uint256){
-    uint256 oneEthPrice = ETHToUSD();
-    return (_amntpaying * 1e18)/oneEthPrice;
-}
-
-
-
-
-function liquidate(address mainUser , uint256 debtCovering) external{
-// 1.CHECK
-    if(healthFactor(mainUser)){
-        revert HealthGood();
+    function NetAmntInUSD(uint256 _amnt) public view returns (uint256) {
+        uint256 SingleEthInUSDPrice = ETHToUSD();
+        uint256 NetAmnt = (SingleEthInUSDPrice * _amnt) / 1e18;
+        return NetAmnt;
     }
 
+    function healthFactor(address user) public view returns (bool) {
+        if (debt[user] == 0) {
+            return true;
+        }
 
+        return (NetAmntInUSD(collateral[user])) >= ((15 * debt[user]) / 10);
+    }
 
-uint256 ethGetting = debtAmntToETH(debtCovering);
-uint256 bonusEth = (LIQUIDATION_BONUS*ethGetting)/100;
-uint256 netEth = ethGetting + bonusEth;
+    function DepositAndMint(uint256 AmntMint) public payable {
+        uint256 AmntFunded = NetAmntInUSD(msg.value);
+        uint256 MaxDebtToken = (AmntFunded * 10) / 15;
 
-if (collateral[mainUser] < netEth) {
+        funders.push(msg.sender);
+        collateral[msg.sender] += msg.value;
+        debt[msg.sender] += AmntMint;
+
+        if (healthFactor(msg.sender)) {
+            i_dEngine.mint(msg.sender, AmntMint);
+        } else {
+            revert SurpassingLimit();
+        }
+    }
+
+    function DebtAndWithdraw(uint256 EthWithdraw, uint256 TokenBurn) public {
+        collateral[msg.sender] -= EthWithdraw;
+        debt[msg.sender] -= TokenBurn;
+
+        if (healthFactor(msg.sender)) {
+            i_dEngine.burn(msg.sender, TokenBurn);
+            (bool callSuccess,) = payable(msg.sender).call{value: EthWithdraw}("");
+            // reetrancy issue ke liye u burn first and then bool thing comes
+        }else {
+            revert HealthFactorBroken();
+        }
+    }
+
+    function debtAmntToETH(uint256 _amntpaying) public view returns (uint256) {
+        uint256 oneEthPrice = ETHToUSD();
+        return (_amntpaying * 1e18) / oneEthPrice;
+    }
+
+    function liquidate(address mainUser, uint256 debtCovering) external {
+        // 1.CHECK
+        if (healthFactor(mainUser)) {
+            revert HealthGood();
+        }
+
+        uint256 ethGetting = debtAmntToETH(debtCovering);
+        uint256 bonusEth = (LIQUIDATION_BONUS * ethGetting) / 100;
+        uint256 netEth = ethGetting + bonusEth;
+
+        if (collateral[mainUser] < netEth) {
             revert InsufficientCollateral();
         }
 
-// 2. EFFECTS(update internal accounting first)
-debt[mainUser]-=debtCovering;
-collateral[mainUser]-=netEth;
+        // 2. EFFECTS(update internal accounting first)
+        debt[mainUser] -= debtCovering;
+        collateral[mainUser] -= netEth;
 
+        // 3.Interactions(external call last)
+        i_dEngine.burnFrom(msg.sender, debtCovering);
 
-// 3.Interactions(external call last)
-i_dEngine.burnFrom(msg.sender,debtCovering);
-
-
-(bool success, ) = payable(msg.sender).call{value: netEth}("");
-
-
-
-
-
-}
-
-
-
+        (bool success,) = payable(msg.sender).call{value: netEth}("");
+    }
 }
