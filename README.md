@@ -1,66 +1,91 @@
-## Foundry
+# MiniMakerDAO 🪙
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+An over-collateralized stablecoin engine built on Ethereum, inspired by MakerDAO's multi-collateral vault system. MiniMakerDAO allows users to deposit collateral (such as Wrapped ETH) to mint `dEngineToken`, an algorithmically pegged stablecoin, backed by live Chainlink oracle price feeds.
 
-Foundry consists of:
+---
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## 📌 Features
 
-## Documentation
+* **Over-Collateralized Minting:** Users can mint `dEngine` stablecoins against deposited collateral while maintaining a safe health factor.
+* **Chainlink Price Feed Integration:** Real-time, reliable market pricing for collateral assets powered by Chainlink Oracles.
+* **Automated Health Factor Mechanics:** Built-in risk engine to prevent under-collateralization and enable system solvency.
+* **Liquidations:** Open liquidation mechanism enabling liquidators to pay off bad debt and receive discounted collateral.
+* **Foundry Development Suite:** Fully unit-tested, integration-tested, and optimized using Foundry (`forge`).
 
-https://book.getfoundry.sh/
+---
 
-## Usage
+## 🏗️ Architecture & Core Contracts
 
-### Build
+src/
+├── dEngineToken.sol    # ERC-20 Stablecoin contract (Mintable/Burnable by VEngine)
+└── VEngine.sol         # Vault Engine controlling collateral, minting, and liquidations
 
-```shell
-$ forge build
-```
+* **`dEngineToken.sol`**: An ERC-20 token contract with administrative ownership assigned exclusively to `VEngine.sol`, ensuring tokens can only be minted or burned through audited vault logic.
+* **`VEngine.sol`**: The core protocol engine managing deposits, withdrawals, collateral valuation via Chainlink, borrowing health factors, and debt settlement.
 
-### Test
+---
 
-```shell
-$ forge test
-```
+## 🚀 Getting Started
 
-### Format
+### Prerequisites
 
-```shell
-$ forge fmt
-```
+Ensure you have [Git](https://git-scm.com/) and [Foundry](https://getfoundry.sh/) installed on your machine.
 
-### Gas Snapshots
+forge --version
 
-```shell
-$ forge snapshot
-```
+### Installation
 
-### Anvil
+1. **Clone the Repository**
+   git clone https://github.com/Saad18819/MiniMakerDAO.git
+   cd MiniMakerDAO
 
-```shell
-$ anvil
-```
+2. **Install Dependencies**
+   git submodule update --init --recursive
 
-### Deploy
+3. **Compile Contracts**
+   forge build
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+---
 
-### Cast
+## 🧪 Testing
 
-```shell
-$ cast <subcommand>
-```
+Run the full test suite using Foundry:
 
-### Help
+# Run all tests
+forge test
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+# Run tests with detailed stack traces
+forge test -vvvv
+
+# Check test coverage
+forge coverage
+
+---
+
+## 💅 Code Formatting & Linting
+
+To ensure the repository passes continuous integration checks, format all Solidity code using `forge fmt`:
+
+# Check formatting
+forge fmt --check
+
+# Auto-format all Solidity files
+forge fmt
+
+---
+
+## 📜 Deployment
+
+1. Set up your `.env` file with your RPC URL and Private Key:
+   SEPOLIA_RPC_URL=<YOUR_SEPOLIA_RPC_URL>
+   PRIVATE_KEY=<YOUR_PRIVATE_KEY>
+   ETHERSCAN_API_KEY=<YOUR_ETHERSCAN_API_KEY>
+
+2. Run the deployment script:
+   forge script script/DeployVEngine.s.sol:DeployVEngine --rpc-url $SEPOLIA_RPC_URL --broadcast --verify
+
+---
+
+## 🛡️ License
+
+This project is licensed under the MIT License.
