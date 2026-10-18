@@ -6,8 +6,8 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'MiniMakerDAO',
-  description: 'Collateralized Stablecoin Dashboard',
+  title: 'MiniMakerDAO | Collateralized Stablecoin Vaults',
+  description: 'Deposit ETH/WETH collateral, mint dEngine tokens, and manage CDP health factor in a high-contrast dark dashboard.',
 };
 
 export default function RootLayout({
@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className="dark">
+      <body className={`${inter.className} bg-[#09090b] text-zinc-100 antialiased min-h-screen selection:bg-zinc-700 selection:text-white`}>
         <Providers>{children}</Providers>
       </body>
     </html>
