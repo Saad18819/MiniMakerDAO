@@ -9,7 +9,7 @@ contract dEngine is ERC20, Ownable {
     error dEngineToken__MustBeMoreThanZero();
     error dEngineToken__NotZeroAddress();
 
-    constructor() ERC20("dEngine Token", "DET") Ownable(msg.sender) {}
+    constructor(address initialOwner) ERC20("dEngine Token", "DET") Ownable(msg.sender) {}
 
     function mint(address _to, uint256 _amount) external onlyOwner returns (bool) {
         if (_to == address(0)) {
