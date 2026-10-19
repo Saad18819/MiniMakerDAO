@@ -11,8 +11,8 @@ contract deployment is Script {
     function run() external returns (VEngine, HelperConfig, dEngine) {
         HelperConfig priceAddress = new HelperConfig();
         address ethUsdprice = priceAddress.addressStore();
-
-        vm.startBroadcast();
+uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        vm.startBroadcast(deployerPrivateKey);
 
         dEngine token = new dEngine();
 
