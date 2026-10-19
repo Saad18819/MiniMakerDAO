@@ -12,9 +12,11 @@ contract deployment is Script {
         HelperConfig priceAddress = new HelperConfig();
         address ethUsdprice = priceAddress.addressStore();
 uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+address deployerAddress = vm.addr(deployerPrivateKey);
+
         vm.startBroadcast(deployerPrivateKey);
 
-        dEngine token = new dEngine();
+        dEngine token = new dEngine(deployerAddress);
 
         VEngine engine = new VEngine(address(token), ethUsdprice);
 
